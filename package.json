@@ -1,0 +1,19 @@
+{
+  "name": "file-explorer-nodejs",
+  "version": "1.0.0",
+  "description": "Application that allows you to explore a directory to share files on your local network",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index",
+    "dev": "nodemon index"
+  },
+  "author": "cristiancosano",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
