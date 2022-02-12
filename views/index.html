@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Explorer</title>
+    <meta name="robots" content="noindex">
+    <title>Tarifas</title>
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
@@ -13,14 +14,14 @@
         }
     
         .orse {
-            background-color: #128386
+            background-color: #009932;
         }
 
-        .container{
-            margin-top: 20px;
-            margin-bottom: 50px;
-            margin-right: 10%;
-            margin-left: 10%;
+        .custom-container{
+            padding-top: 20px;
+            padding-bottom: 50px;
+            width: 80%;
+            margin: 0 auto;
         }
         body{
             background-color: #F3F4F6;
@@ -31,22 +32,20 @@
     <div class="flex flex-col h-screen justify-between">
     <div id="header" class="bannerFondo orse pt-16 pb-10 mb-5">
         <div class="w-full text-center">
-            <p class="text-sm tracking-widest text-white uppercase">Share files in your local network</p>
+            <p class="text-sm tracking-widest text-white uppercase">Explorador de Tarifas</p>
             <h1 class="font-bold text-5xl text-white uppercase">
-                File Explorer
+                Alinatal
             </h1>
         </div>
     </div>
-    <div class="container">
+    <div class="custom-container">
+        <button onclick="location.href='/login/out'" class="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded w-full mb-5">Cerrar sesion</button>
         <ul id="files" style="display: block;">
         </ul>
     </div>
 
     <footer class="h-20 text-center pt-16 pb-20 orse text-white">
-        <p class="text-sm tracking-widest text-white uppercase">Developed by <a href="https://cristiancosano.com/">Cristian Cosano</a></p>
-        <p class="text-sm tracking-widest text-white uppercase">Available ips: <span id="ips"></span></p>
-        <p class="text-sm tracking-widest text-white uppercase">Used port: <span id="port"></span></p>
-
+        <p class="text-sm tracking-widest text-white uppercase">© <script>document.write(new Date().getFullYear())</script> Copyright: Ali Natal, S.L.</p>
     </footer>
 </div>
     
@@ -57,7 +56,7 @@
             let icon = document.createElement('span')
             icon.classList.add('material-icons', 'align-middle', 'mr-1')
             icon.appendChild(document.createTextNode('folder'))
-            icon.style='color: #5F6367'
+            icon.style='color: #FF6600'
 
             //Folder name node
             let currentDirectory = document.createElement('span')
@@ -75,7 +74,7 @@
             a.classList.add('align-middle')
             let icon = document.createElement('span')
             icon.classList.add('material-icons', 'align-middle', 'mr-1')
-            icon.style='color: #4385F3'
+            icon.style='color: #B30C01'
 
             icon.appendChild(document.createTextNode('description'))
             a.appendChild(icon)
@@ -89,52 +88,35 @@
                 let li = document.createElement('li');
                
                 if(Array.isArray(files[i])){
+                    //It's a folder
                     let newUl = document.createElement('ul')
-                    var directory = files[i][0];
-                    while(Array.isArray(directory)) directory = directory[0]
-                    
-                    directory = directory.directory.split('/').pop()
+                    var directory = files[i][files[i].length-1]
+            
+                    if(directory != undefined && directory.directory != undefined){
+                        directory = directory.directory.split('/').pop()
                 
-                    createFolder(li, directory)
-                    newUl.classList.add('pl-5')
+                        createFolder(li, directory)
+                        newUl.classList.add('pl-5')
 
-                    li.appendChild(newUl)
-                    setFiles(files[i], newUl)
+                        li.appendChild(newUl)
+                        setFiles(files[i], newUl)
+                    }
                 }
-                else createFile(li, files[i].filename, files[i].path)
+                else {
+                    //It's a file
+                    createFile(li, files[i].filename, files[i].path) 
+                }
                 
                 ul.appendChild(li)
             }   
         }
 
-        function setIps(ips){
-            const domIp = document.getElementById('ips')
-            let text = ''
-            for(ip in ips){
-                let current = ips.pop()
-                text += current.ip
-                if(ips.length > 0) text += ','
-            }
 
-            domIp.appendChild(document.createTextNode(text))
-        }
-
-        function setPort(port){
-            const domPort = document.getElementById('port')
-            domPort.appendChild(document.createTextNode(port))
-        }
         fetch('/api/files')
             .then(response => response.json())
             .then(data => {
                 setFiles(data.files)
             });
-
-        fetch('/api/network')
-            .then(response => response.json())
-            .then(data => {
-                setIps(data.ips)
-                setPort(data.port)
-            })
     </script>
 </body>
 </html>
