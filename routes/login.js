@@ -5,7 +5,7 @@ const router = Router();
 router.get('', (req, res) => {
     if(req.signedCookies.tarifas_token == '654321') res.redirect('/');
     else {
-        res.send(path.join(__dirname,'views/login.html');
+        res.send(path.join(__dirname,'views/login.html'))
         res.sendFile(path.join(__dirname,'views/login.html'));
     }
 })
