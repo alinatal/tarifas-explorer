@@ -6,8 +6,8 @@ const getFiles = (dir, files) => {
     var newFiles = fs.readdirSync(dir);
 
     for (let i in newFiles){
-        //console.log('ee',path.join(__dirname, '..'))
         dir = dir.replace(path.join(__dirname, '..')+'/', '')
+        return dir;
         let name =  dir + '/' + newFiles[i];
         
         if (fs.statSync(name).isDirectory()) files.push(getFiles(name, files));
