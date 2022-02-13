@@ -1,11 +1,15 @@
 const fs = require('fs');
+const path = require('path');
 
 const getFiles = (dir, files) => {
     files = [];
     var newFiles = fs.readdirSync(dir);
 
     for (let i in newFiles){
-        let name = dir + '/' + newFiles[i];
+        //console.log('ee',path.join(__dirname, '..'))
+        dir = dir.replace(path.join(__dirname, '..')+'/', '')
+        let name =  dir + '/' + newFiles[i];
+        
         if (fs.statSync(name).isDirectory()) files.push(getFiles(name, files));
         else files.push({directory: dir, filename: newFiles[i], path: encodeURI(name)});
     }
