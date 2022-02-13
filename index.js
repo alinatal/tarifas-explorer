@@ -3,6 +3,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 3000;
 const router = require('./routes')
+const path = require('path');
 const checkLogin = require('./middlewares/checkLogin')
 
 
