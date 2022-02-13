@@ -9,7 +9,7 @@ const checkLogin = require('./middlewares/checkLogin')
 
 app.use(cookieParser('secret'));
 app.use(express.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, 'tarifas')));
+// app.use(express.static(path.join(__dirname, 'tarifas')));
 app.use(router);
 
 app.listen(port, () => {
