@@ -9,7 +9,7 @@ const getFiles = (dir, files) => {
         dir = dir.replace(path.join(__dirname, '..')+'/', '')
         let name =  dir + '/' + newFiles[i];
                 
-        if (fs.statSync(path.join(__dirname, '..', name)).isDirectory()) files.push(getFiles(name, files));
+        if (fs.statSync(path.join(__dirname, '..', name)).isDirectory()) files.push(getFiles(path.join(__dirname, '..', name), files));
         else files.push({directory: dir, filename: newFiles[i], path: encodeURI(name)});
     }
 
