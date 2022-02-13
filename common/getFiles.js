@@ -10,7 +10,10 @@ const getFiles = (dir, files) => {
         let name =  dir + '/' + newFiles[i];
                 
         if (fs.statSync(path.join(__dirname, '..', name)).isDirectory()) files.push(getFiles(path.join(__dirname, '..', name), files));
-        else files.push({directory: dir, filename: newFiles[i], path: encodeURI(name)});
+        else {
+            name = name.replace('public', '');
+            files.push({directory: dir, filename: newFiles[i], path: encodeURI(name)});
+        }
     }
 
     return files;
