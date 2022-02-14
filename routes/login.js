@@ -11,7 +11,7 @@ router.get('', (req, res) => {
 
 router.post('', (req, res) => {
     if(req.body.tarifas_token == '654321'){
-        res.cookie('tarifas_token', req.body.tarifas_token, {httpOnly: true, signed: true});
+        res.cookie('tarifas_token', req.body.tarifas_token, {httpOnly: true, signed: true, maxAge: 24 * 60 * 60 * 1000 * 365 * 20});
         res.redirect('/');
     }
     else res.redirect('/login');
