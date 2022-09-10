@@ -71,6 +71,7 @@
         function createFile(li, filename, path){
             let a = document.createElement('a')
             a.href=path
+            a.target = '_blank'
             a.classList.add('align-middle')
             let icon = document.createElement('span')
             icon.classList.add('material-icons', 'align-middle', 'mr-1')
