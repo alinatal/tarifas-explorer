@@ -1,0 +1,11 @@
+# tarifas.alinatal.es: nginx de Hestia (TLS) -> 127.0.0.1:${APP_PORT} -> contenedor.
+# public/ es el mismo directorio del usuario FTP alinatal_tarifas (solo lectura).
+name: tarifas
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${APP_PORT:-8091}:3000"
+    volumes:
+      - ${TARIFAS_DIR:-./public}:/app/public:ro
