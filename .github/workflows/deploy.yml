@@ -1,0 +1,56 @@
+name: Deploy
+
+# Push/merge a main: build + prueba de humo y, si pasa, despliegue automático.
+# Pull requests: solo build + prueba. Manual: desplegar otra rama/tag.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Rama o tag a desplegar
+        default: main
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-tarifas-${{ github.event_name == 'pull_request' && github.ref || 'prod' }}
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build y prueba de humo
+        run: |
+          mkdir -p /tmp/tarifas/____Tarifas_PVP && echo '<h1>prueba</h1>' > "/tmp/tarifas/____Tarifas_PVP/T PRUEBA.html"
+          docker build -t tarifas .
+          docker run -d --name t -p 3000:3000 -v /tmp/tarifas:/app/public:ro tarifas
+          for i in $(seq 1 20); do curl -fsS -o /dev/null http://127.0.0.1:3000/login && break; sleep 1; done
+          curl -fsS -o /dev/null http://127.0.0.1:3000/login
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000/)" = 302   # sin login redirige al login
+          curl -fsS http://127.0.0.1:3000/api/files | grep -q 'T%20PRUEBA.html'
+          docker logs t
+
+  deploy:
+    needs: tests
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Desplegar
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          REF: ${{ inputs.ref || 'main' }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -o StrictHostKeyChecking=yes -o BatchMode=yes "$USER@$HOST" "$REF"
