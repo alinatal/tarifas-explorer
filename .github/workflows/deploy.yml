@@ -29,12 +29,12 @@ jobs:
         run: |
           mkdir -p /tmp/tarifas/____Tarifas_PVP && echo '<h1>prueba</h1>' > "/tmp/tarifas/____Tarifas_PVP/T PRUEBA.html"
           docker build -t tarifas .
-          docker run -d --name t -p 3000:3000 -v /tmp/tarifas:/app/public:ro tarifas
+          docker run -d --name tarifas-test -p 3000:3000 -v /tmp/tarifas:/app/public:ro tarifas
           for i in $(seq 1 20); do curl -fsS -o /dev/null http://127.0.0.1:3000/login && break; sleep 1; done
           curl -fsS -o /dev/null http://127.0.0.1:3000/login
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000/)" = 302   # sin login redirige al login
           curl -fsS http://127.0.0.1:3000/api/files | grep -q 'T%20PRUEBA.html'
-          docker logs t
+          docker logs tarifas-test
 
   deploy:
     needs: tests
